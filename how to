@@ -1,0 +1,44 @@
+API keys------
+
+# PowerShell
+$env:OPENAI_API_KEY="sk-..."     # or:
+$env:GOOGLE_API_KEY="your_gemini_key"
+
+run-------
+
+python app.py                      # interactive
+python ask.py "What does policy say?"   # one-shot
+
+basic how to--------------
+
+Open a new Colab notebook → add three cells below.
+
+Cell 1 — Clone + install
+# ⬇️ CHANGE this to your repo URL
+REPO_URL = "https://github.com/<your-username>/<your-repo>.git"
+
+!git clone {REPO_URL}
+%cd <your-repo>
+!pip install -q -r requirements.txt
+
+
+Cell 2 — Add docs + set ONE API key
+# Option 1: Quickly create a sample doc
+!mkdir -p data
+with open("data/sample.txt","w",encoding="utf-8") as f:
+    f.write("""Travel Policy
+- Meals capped at $50/day
+- Hotels require pre-approval
+- Reimburse within 30 days with receipts
+""")
+
+# Option 2: Or upload your own files via Colab's Files pane into /content/<your-repo>/data
+# 🔑 Set ONE provider (comment out the one you’re not using)
+import os
+# os.environ["OPENAI_API_KEY"] = "sk-..."         # OpenAI
+os.environ["GOOGLE_API_KEY"] = "your_gemini_key"   # Gemini
+
+
+Cell 3 — Ask a question (one-shot)
+!python ask.py "What is the daily meal cap and reimbursement deadline?"
+That’s it. You’ll see an Answer and Sources printed.

@@ -1,0 +1,21 @@
+import sys
+from app import build_corpus, build_bm25, tokenize, format_context, pretty_sources, make_prompt, answer_with_openai, answer_with_gemini, choose_provider
+
+def ask(question: str, k: int = 4):
+    chunks, metas = build_corpus("data")
+    bm25 = build_bm25(chunks)
+    scores = bm25.get_scores(tokenize(question))
+    top_idx = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
+    context = format_context(chunks, metas, top_idx)
+    prompt = make_prompt(question, context)
+    provider = choose_provider()
+    ans = answer_with_openai(prompt) if provider=="openai" else answer_with_gemini(prompt)
+    print("Q:", question)
+    print("\nA:", ans)
+    print("\nSources:", pretty_sources(metas, top_idx))
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python ask.py \"Your question here\"")
+        sys.exit(1)
+    ask(sys.argv[1])
